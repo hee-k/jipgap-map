@@ -1,0 +1,160 @@
+# ==========================================
+# Java
+# ==========================================
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+*.zip
+*.tar.gz
+*.rar
+hs_err_pid*
+replay_pid*
+
+# ==========================================
+# Maven
+# ==========================================
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# ==========================================
+# Gradle
+# ==========================================
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+gradle-app.setting
+!gradle-wrapper.jar
+
+# ==========================================
+# Spring Boot
+# ==========================================
+HELP.md
+!.mvn/wrapper/maven-wrapper.properties
+application-local.yml
+application-local.yaml
+application-local.properties
+application-dev.yml
+application-dev.yaml
+application-prod.yml
+application-prod.yaml
+application-secret.yml
+application-secret.yaml
+application-secret.properties
+
+# ==========================================
+# 보안 / 환경변수
+# ==========================================
+.env
+.env.*
+!.env.example
+*.env
+secrets/
+secret.yml
+secret.yaml
+secret.properties
+*-secret.*
+*-credentials.*
+credentials.json
+keystore.jks
+keystore.p12
+*.pfx
+*.pem
+*.key
+*.crt
+*.cer
+serviceAccountKey.json
+firebase-adminsdk*.json
+google-services.json
+
+# ==========================================
+# PRD / 기획 문서
+# ==========================================
+prd.*
+PRD.*
+*.prd
+*_prd.*
+docs/prd/
+docs/PRD/
+docs/tasks/
+
+# ==========================================
+# Claude / AI
+# ==========================================
+.claude/
+CLAUDE.local.md
+CLAUDE.md
+.claudeignore
+claude_output/
+ai_context/
+
+# ==========================================
+# IDE - IntelliJ IDEA
+# ==========================================
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+# ==========================================
+# IDE - Eclipse
+# ==========================================
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+# ==========================================
+# IDE - VS Code
+# ==========================================
+.vscode/
+!.vscode/extensions.json
+
+# ==========================================
+# OS
+# ==========================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ==========================================
+# 로그
+# ==========================================
+*.log
+logs/
+log/
+spring.log
+
+# ==========================================
+# 임시 파일
+# ==========================================
+*.tmp
+*.temp
+*.swp
+*.swo
+*~

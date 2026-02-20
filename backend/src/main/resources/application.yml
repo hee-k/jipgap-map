@@ -17,6 +17,11 @@ server:
   servlet:
     context-path: /api
 
+molit:
+  api:
+    base-url: https://openapi.molit.go.kr/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTradeDev
+    key: ${MOLIT_API_KEY}
+
 springdoc:
   api-docs:
     path: /v3/api-docs

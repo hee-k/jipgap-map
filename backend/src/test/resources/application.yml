@@ -10,3 +10,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+molit:
+  api:
+    base-url: http://localhost:8089
+    key: test-key

@@ -1,34 +1,22 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect } from 'react'
+import MapContainer from './components/MapContainer'
+import Legend from './components/Legend'
+import useMap from './hooks/useMap'
+import useTradeData from './hooks/useTradeData'
+import './styles/map.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const { vectorSource } = useMap('map')
+  const { period, loading } = useTradeData(vectorSource)
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div style={{ position: 'relative' }}>
+      <MapContainer />
+      <Legend />
+      <div style={{ position: 'absolute', top: 16, left: 16, background: 'rgba(255,255,255,0.9)', padding: '8px 12px', borderRadius: 6, fontSize: 12 }}>
+        {loading ? 'Loading…' : period ? `${period.year}년 ${period.month}월` : '데이터 없음'}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
   )
 }
 

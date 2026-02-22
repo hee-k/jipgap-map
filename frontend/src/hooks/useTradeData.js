@@ -2,28 +2,34 @@ import { useEffect, useMemo, useState } from 'react'
 import GeoJSON from 'ol/format/GeoJSON'
 import { Fill, Stroke, Style } from 'ol/style'
 import { getPriceColor } from '../utils/mapStyle'
-import api, { fetchPeriods, fetchTradeMap } from '../utils/api'
+import { fetchPeriods, fetchTradeMap } from '../utils/api'
 
-export default function useTradeData(vectorSource) {
-  const [period, setPeriod] = useState(null)
+export default function useTradeData(vectorSource, period) {
+  const [periods, setPeriods] = useState([])
   const [loading, setLoading] = useState(false)
 
   const geoJsonFormat = useMemo(() => new GeoJSON(), [])
 
   useEffect(() => {
     let mounted = true
+    const loadPeriods = async () => {
+      const periodsRes = await fetchPeriods()
+      const nextPeriods = periodsRes.data?.periods ?? []
+      if (mounted) setPeriods(nextPeriods)
+    }
+    loadPeriods()
+    return () => {
+      mounted = false
+    }
+  }, [])
+
+  useEffect(() => {
+    let mounted = true
     const init = async () => {
+      if (!period) return
       setLoading(true)
       try {
-        const periodsRes = await fetchPeriods()
-        const periods = periodsRes.data?.periods ?? []
-        if (periods.length === 0) return
-
-        const latest = periods[0]
-        if (!mounted) return
-        setPeriod(latest)
-
-        const mapRes = await fetchTradeMap(latest.year, latest.month)
+        const mapRes = await fetchTradeMap(period.year, period.month)
         const featureCollection = mapRes.data
         const features = geoJsonFormat.readFeatures(featureCollection, {
           featureProjection: 'EPSG:3857',
@@ -53,7 +59,7 @@ export default function useTradeData(vectorSource) {
     return () => {
       mounted = false
     }
-  }, [vectorSource, geoJsonFormat])
+  }, [vectorSource, geoJsonFormat, period])
 
-  return { period, loading }
+  return { periods, loading }
 }

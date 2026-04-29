@@ -1,20 +1,13 @@
 package com.jipgap.repository;
 
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
+import com.jipgap.domain.SggBoundary;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-@Repository
-public class SggBoundaryRepository {
+public interface SggBoundaryRepository extends JpaRepository<SggBoundary, String> {
 
-    private final JdbcTemplate jdbcTemplate;
-
-    public SggBoundaryRepository(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-
-    public List<String> findAllSggCodes() {
-        return jdbcTemplate.queryForList("SELECT sgg_cd FROM sgg_boundary ORDER BY sgg_cd", String.class);
-    }
+    @Query("SELECT s.sggCd FROM SggBoundary s ORDER BY s.sggCd")
+    List<String> findAllSggCodes();
 }

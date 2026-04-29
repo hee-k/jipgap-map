@@ -1,11 +1,23 @@
 package com.jipgap.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "apt_trade")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AptTrade {
 
     @Id
@@ -66,42 +78,28 @@ public class AptTrade {
     @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    public AptTrade() {
+    @Builder
+    private AptTrade(String sggCd, String dongName, String aptName, Long dealAmount,
+                     Integer dealYear, Integer dealMonth, Integer dealDay,
+                     BigDecimal exclusiveArea, Integer floor, Integer builtYear,
+                     String cancelType, String cancelDay, String dealingType,
+                     String aptDong, String sellerType, String buyerType, String landLeasehold) {
+        this.sggCd = sggCd;
+        this.dongName = dongName;
+        this.aptName = aptName;
+        this.dealAmount = dealAmount;
+        this.dealYear = dealYear;
+        this.dealMonth = dealMonth;
+        this.dealDay = dealDay;
+        this.exclusiveArea = exclusiveArea;
+        this.floor = floor;
+        this.builtYear = builtYear;
+        this.cancelType = cancelType;
+        this.cancelDay = cancelDay;
+        this.dealingType = dealingType;
+        this.aptDong = aptDong;
+        this.sellerType = sellerType;
+        this.buyerType = buyerType;
+        this.landLeasehold = landLeasehold;
     }
-
-    public Long getId() { return id; }
-    public String getSggCd() { return sggCd; }
-    public void setSggCd(String sggCd) { this.sggCd = sggCd; }
-    public String getDongName() { return dongName; }
-    public void setDongName(String dongName) { this.dongName = dongName; }
-    public String getAptName() { return aptName; }
-    public void setAptName(String aptName) { this.aptName = aptName; }
-    public Long getDealAmount() { return dealAmount; }
-    public void setDealAmount(Long dealAmount) { this.dealAmount = dealAmount; }
-    public Integer getDealYear() { return dealYear; }
-    public void setDealYear(Integer dealYear) { this.dealYear = dealYear; }
-    public Integer getDealMonth() { return dealMonth; }
-    public void setDealMonth(Integer dealMonth) { this.dealMonth = dealMonth; }
-    public Integer getDealDay() { return dealDay; }
-    public void setDealDay(Integer dealDay) { this.dealDay = dealDay; }
-    public BigDecimal getExclusiveArea() { return exclusiveArea; }
-    public void setExclusiveArea(BigDecimal exclusiveArea) { this.exclusiveArea = exclusiveArea; }
-    public Integer getFloor() { return floor; }
-    public void setFloor(Integer floor) { this.floor = floor; }
-    public Integer getBuiltYear() { return builtYear; }
-    public void setBuiltYear(Integer builtYear) { this.builtYear = builtYear; }
-    public String getCancelType() { return cancelType; }
-    public void setCancelType(String cancelType) { this.cancelType = cancelType; }
-    public String getCancelDay() { return cancelDay; }
-    public void setCancelDay(String cancelDay) { this.cancelDay = cancelDay; }
-    public String getDealingType() { return dealingType; }
-    public void setDealingType(String dealingType) { this.dealingType = dealingType; }
-    public String getAptDong() { return aptDong; }
-    public void setAptDong(String aptDong) { this.aptDong = aptDong; }
-    public String getSellerType() { return sellerType; }
-    public void setSellerType(String sellerType) { this.sellerType = sellerType; }
-    public String getBuyerType() { return buyerType; }
-    public void setBuyerType(String buyerType) { this.buyerType = buyerType; }
-    public String getLandLeasehold() { return landLeasehold; }
-    public void setLandLeasehold(String landLeasehold) { this.landLeasehold = landLeasehold; }
 }

@@ -5,80 +5,84 @@ import com.jipgap.dto.TradeMapResponse;
 import com.jipgap.dto.TradePeriodsResponse;
 import com.jipgap.exception.NotFoundException;
 import com.jipgap.repository.TradeQueryRepository;
+import com.jipgap.repository.TradeQueryRepository.AptRow;
+import com.jipgap.repository.TradeQueryRepository.PeriodRow;
+import com.jipgap.repository.TradeQueryRepository.SummaryRow;
+import com.jipgap.repository.TradeQueryRepository.TradeMapRow;
 import com.jipgap.util.GeoJsonConverter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class TradeMapService {
 
     private final TradeQueryRepository tradeQueryRepository;
 
-    public TradeMapService(TradeQueryRepository tradeQueryRepository) {
-        this.tradeQueryRepository = tradeQueryRepository;
-    }
-
     public TradeMapResponse getTradeMap(int year, int month) {
-        List<Map<String, Object>> rows = tradeQueryRepository.fetchTradeMap(year, month);
+        List<TradeMapRow> rows = tradeQueryRepository.fetchTradeMap(year, month);
         TradeMapResponse response = new TradeMapResponse();
-        for (Map<String, Object> row : rows) {
-            Map<String, Object> properties = new HashMap<>();
-            properties.put("sggCd", row.get("sggcd"));
-            properties.put("sggKorNm", row.get("sggkornm"));
-            properties.put("sidoNm", row.get("sidonm"));
-            properties.put("avgPrice", row.get("avgprice"));
-            properties.put("avgPricePerSqm", row.get("avgpricepersqm"));
-            properties.put("tradeCount", row.get("tradecount"));
-
-            String geojson = (String) row.get("geojson");
-            Map<String, Object> geometry = GeoJsonConverter.parse(geojson);
-            response.addFeature(new TradeMapResponse.Feature(geometry, properties));
+        for (TradeMapRow row : rows) {
+            response.addFeature(new TradeMapResponse.Feature(
+                    GeoJsonConverter.parse(row.geojson()),
+                    toProperties(row)
+            ));
         }
         return response;
     }
 
     public TradeDetailResponse getTradeDetail(String sggCd, int year, int month) {
-        TradeQueryRepository.SummaryRow summaryRow = tradeQueryRepository.fetchSummary(sggCd, year, month)
+        SummaryRow summary = tradeQueryRepository.fetchSummary(sggCd, year, month)
                 .orElseThrow(() -> new NotFoundException("No trade data"));
+
+        List<TradeDetailResponse.AptSummary> topApts = tradeQueryRepository.fetchAptDetails(sggCd, year, month).stream()
+                .map(TradeMapService::toAptSummary)
+                .toList();
 
         TradeDetailResponse response = new TradeDetailResponse();
         response.setSggCd(sggCd);
         response.setYear(year);
         response.setMonth(month);
         response.setSummary(new TradeDetailResponse.Summary(
-                summaryRow.avgPrice(),
-                summaryRow.maxPrice(),
-                summaryRow.minPrice(),
-                summaryRow.tradeCount()
+                summary.avgPrice(), summary.maxPrice(), summary.minPrice(), summary.tradeCount()
         ));
-
-        List<TradeQueryRepository.AptRow> aptRows = tradeQueryRepository.fetchAptDetails(sggCd, year, month);
-        List<TradeDetailResponse.AptSummary> topApts = aptRows.stream()
-                .map(row -> new TradeDetailResponse.AptSummary(
-                        row.aptName(),
-                        row.avgPrice(),
-                        row.maxPrice(),
-                        row.minPrice(),
-                        row.tradeCount()
-                ))
-                .toList();
         response.setTopApts(topApts);
         return response;
     }
 
     public TradePeriodsResponse getPeriods() {
-        List<Map<String, Object>> rows = tradeQueryRepository.fetchPeriods();
-        TradePeriodsResponse response = new TradePeriodsResponse();
-        List<TradePeriodsResponse.Period> periods = rows.stream()
-                .map(row -> new TradePeriodsResponse.Period(
-                        ((Number) row.get("year")).intValue(),
-                        ((Number) row.get("month")).intValue()
-                ))
+        List<TradePeriodsResponse.Period> periods = tradeQueryRepository.fetchPeriods().stream()
+                .map(TradeMapService::toPeriod)
                 .toList();
+        TradePeriodsResponse response = new TradePeriodsResponse();
         response.setPeriods(periods);
         return response;
+    }
+
+    private static Map<String, Object> toProperties(TradeMapRow row) {
+        Map<String, Object> props = new HashMap<>();
+        props.put("sggCd", row.sggCd());
+        props.put("sggKorNm", row.sggKorNm());
+        props.put("sidoNm", row.sidoNm());
+        props.put("avgPrice", row.avgPrice());
+        props.put("avgPricePerSqm", row.avgPricePerSqm());
+        props.put("tradeCount", row.tradeCount());
+        return props;
+    }
+
+    private static TradeDetailResponse.AptSummary toAptSummary(AptRow row) {
+        return new TradeDetailResponse.AptSummary(
+                row.aptName(), row.avgPrice(), row.maxPrice(), row.minPrice(), row.tradeCount()
+        );
+    }
+
+    private static TradePeriodsResponse.Period toPeriod(PeriodRow row) {
+        return new TradePeriodsResponse.Period(row.year(), row.month());
     }
 }

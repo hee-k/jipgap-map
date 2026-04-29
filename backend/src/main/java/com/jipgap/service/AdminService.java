@@ -1,18 +1,18 @@
 package com.jipgap.service;
 
-import org.springframework.jdbc.core.JdbcTemplate;
+import jakarta.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class AdminService {
 
-    private final JdbcTemplate jdbcTemplate;
+    private final EntityManager em;
 
-    public AdminService(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-
+    @Transactional
     public void refreshMaterializedView() {
-        jdbcTemplate.execute("REFRESH MATERIALIZED VIEW mv_sgg_avg_price");
+        em.createNativeQuery("REFRESH MATERIALIZED VIEW mv_sgg_avg_price").executeUpdate();
     }
 }

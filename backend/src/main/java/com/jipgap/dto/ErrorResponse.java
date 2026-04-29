@@ -1,17 +1,11 @@
 package com.jipgap.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public class ErrorResponse {
-    private String code;
-    private String message;
-
-    public ErrorResponse() {
-    }
-
-    public ErrorResponse(String code, String message) {
-        this.code = code;
-        this.message = message;
-    }
-
-    public String getCode() { return code; }
-    public String getMessage() { return message; }
+    private final String code;
+    private final String message;
 }

@@ -5,12 +5,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Map;
 
-public class GeoJsonConverter {
-    private static final ObjectMapper mapper = new ObjectMapper();
+public final class GeoJsonConverter {
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final TypeReference<Map<String, Object>> MAP_TYPE = new TypeReference<>() {};
+
+    private GeoJsonConverter() {
+    }
 
     public static Map<String, Object> parse(String geojson) {
         try {
-            return mapper.readValue(geojson, new TypeReference<>() {});
+            return MAPPER.readValue(geojson, MAP_TYPE);
         } catch (Exception e) {
             throw new IllegalStateException("Invalid GeoJSON", e);
         }

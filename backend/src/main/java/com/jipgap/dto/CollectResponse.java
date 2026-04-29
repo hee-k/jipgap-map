@@ -1,8 +1,13 @@
 package com.jipgap.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
 public class CollectResponse {
     private int year;
     private int month;
@@ -18,13 +23,7 @@ public class CollectResponse {
         this.month = month;
     }
 
-    public int getYear() { return year; }
-    public int getMonth() { return month; }
-    public int getTotalRequested() { return totalRequested; }
-    public int getTotalInserted() { return totalInserted; }
-    public List<String> getFailedSggCd() { return failedSggCd; }
-
-    public void setTotalRequested(int totalRequested) { this.totalRequested = totalRequested; }
-    public void setTotalInserted(int totalInserted) { this.totalInserted = totalInserted; }
-    public void addFailedSggCd(String sggCd) { this.failedSggCd.add(sggCd); }
+    public void addFailedSggCd(String sggCd) {
+        this.failedSggCd.add(sggCd);
+    }
 }

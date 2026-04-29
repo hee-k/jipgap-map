@@ -1,55 +1,47 @@
 package com.jipgap.controller;
 
-import com.jipgap.dto.ErrorResponse;
 import com.jipgap.dto.TradeDetailResponse;
 import com.jipgap.dto.TradeMapResponse;
 import com.jipgap.dto.TradePeriodsResponse;
-import com.jipgap.exception.NotFoundException;
 import com.jipgap.service.TradeMapService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/v1/trade")
+@RequiredArgsConstructor
+@Validated
 public class TradeMapController {
 
     private final TradeMapService tradeMapService;
 
-    public TradeMapController(TradeMapService tradeMapService) {
-        this.tradeMapService = tradeMapService;
-    }
-
     @GetMapping("/map")
-    public ResponseEntity<?> map(@RequestParam(required = false) Integer year,
-                                 @RequestParam(required = false) Integer month) {
-        if (year == null || month == null) {
-            return ResponseEntity.badRequest()
-                    .body(new ErrorResponse("BAD_REQUEST", "year and month are required"));
-        }
-        TradeMapResponse response = tradeMapService.getTradeMap(year, month);
-        return ResponseEntity.ok(response);
+    public TradeMapResponse map(
+            @RequestParam @NotNull @Min(2005) @Max(2100) Integer year,
+            @RequestParam @NotNull @Min(1) @Max(12) Integer month
+    ) {
+        return tradeMapService.getTradeMap(year, month);
     }
 
     @GetMapping("/detail")
-    public ResponseEntity<?> detail(@RequestParam(required = false) String sggCd,
-                                    @RequestParam(required = false) Integer year,
-                                    @RequestParam(required = false) Integer month) {
-        if (sggCd == null || sggCd.isBlank() || year == null || month == null) {
-            return ResponseEntity.badRequest()
-                    .body(new ErrorResponse("BAD_REQUEST", "sggCd, year, month are required"));
-        }
-        try {
-            TradeDetailResponse response = tradeMapService.getTradeDetail(sggCd, year, month);
-            return ResponseEntity.ok(response);
-        } catch (NotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("NOT_FOUND", e.getMessage()));
-        }
+    public TradeDetailResponse detail(
+            @RequestParam @NotBlank String sggCd,
+            @RequestParam @NotNull @Min(2005) @Max(2100) Integer year,
+            @RequestParam @NotNull @Min(1) @Max(12) Integer month
+    ) {
+        return tradeMapService.getTradeDetail(sggCd, year, month);
     }
 
     @GetMapping("/periods")
-    public ResponseEntity<TradePeriodsResponse> periods() {
-        return ResponseEntity.ok(tradeMapService.getPeriods());
+    public TradePeriodsResponse periods() {
+        return tradeMapService.getPeriods();
     }
 }
